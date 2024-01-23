@@ -15,7 +15,7 @@ defineProps({
 
 <template>
   <header class="app-header">
-    <var-app-bar safe-area-top :title="title" :title-position="titlePosition">
+    <var-app-bar safe-area-top :title="title" :title-position="titlePosition" elevation="false">
       <template #left>
         <slot name="left" />
       </template>

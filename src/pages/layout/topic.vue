@@ -1,12 +1,20 @@
 <script setup lang="ts">
 const isRefresh = ref(false)
-const active = ref<number[]>([])
-
+const date = ref<any>(new Date())
 function handleRefresh() {
   isRefresh.value = false
 }
+const loading = ref(false)
+const finished = ref(false)
+const list = ref([1, 2, 3])
+const floating = ref(false)
+function load() {
+  setTimeout(() => {
+    loading.value = false
+    finished.value = true
+  }, 1000)
+}
 </script>
-
 <template>
   <div class="topic">
     <var-pull-refresh v-model="isRefresh" @refresh="handleRefresh">
@@ -19,28 +27,45 @@ function handleRefresh() {
           <app-theme-switch />
         </template>
       </app-header>
+      <var-date-picker v-model="date" />
+      <var-list :finished="finished" v-model:loading="loading" @load="load">
+        <var-space class="room-list" direction="column" size="large" justify="center" floating>
+          <var-card
+            class="card"
+            v-for="item in list"
+            :key="item"
+            ripple
+            outline
+            title="日常组会"
+            description="如果华佗个字傲~"
+            v-model:floating="floating"
+          >
+            <template #description>
+              <var-divider dashed />
+              <var-space justify="space-between">
+                <var-space direction="column">
+                  <var-space>
+                    <var-button type="info" size="mini">空调</var-button>
+                    <var-button type="info" size="mini">一体机</var-button>
+                    <var-button type="info" size="mini">监控</var-button>
+                  </var-space>
+                  <var-space>
+                    <var-icon name="account-circle" />
+                    <span>容量：32人</span>
+                  </var-space>
+                </var-space>
 
-      <var-collapse v-model="active" :elevation="0" :offset="false">
-        <var-collapse-item v-for="i in 20" :key="i">
-          <template #title>
-            <div class="topic-item" :class="{ 'topic-item-active': active.includes(i - 1) }">
-              <div class="topic-item-icon">
-                <var-icon name="heart" size="6vmin" />
-              </div>
-              <span class="topic-item-title">{{ $t('Topic') }} {{ i }}</span>
-            </div>
-          </template>
-
-          <div class="topic-item-child">
-            <div class="topic-item" v-for="j in 5" :key="j" v-ripple="{ color: 'var(--color-primary)' }">
-              <div class="topic-item-icon">
-                <var-icon name="star" size="6vmin" />
-              </div>
-              <span class="topic-item-title">{{ $t('Child topic') }} {{ i }} - {{ j }}</span>
-            </div>
-          </div>
-        </var-collapse-item>
-      </var-collapse>
+                <var-button type="primary" @click="floating = true">预约</var-button>
+              </var-space>
+            </template>
+            <template #extra> </template>
+            <template #floating-content>
+              <var-divider dashed />
+              <div class="card-example-text"></div>
+            </template>
+          </var-card>
+        </var-space>
+      </var-list>
     </var-pull-refresh>
   </div>
 
@@ -49,9 +74,11 @@ function handleRefresh() {
 
 <style lang="less" scoped>
 .topic {
-  --collapse-header-padding: 0 20px;
-  padding: calc(var(--app-bar-height) + 1px) 0 0;
-
+  padding: calc(var(--app-bar-height)) 0 0;
+  --date-picker-border-radius: 0;
+  --card-padding: 5px;
+  --card-footer-margin: 0;
+  --card-title-margin: 0;
   &-item {
     display: flex;
     align-items: center;
@@ -73,6 +100,9 @@ function handleRefresh() {
       padding: 0 7px;
     }
   }
+}
+.room-list {
+  padding: 0 10px;
 }
 </style>
 
