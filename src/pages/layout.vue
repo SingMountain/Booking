@@ -8,22 +8,22 @@ const active = ref()
 
 const tabs = ref([
   {
-    label: 'HOME',
+    label: '首页',
     icon: 'home',
     name: '/layout/home'
   },
   {
-    label: 'TOPIC',
-    icon: 'heart',
+    label: '时间预约',
+    icon: 'calendar-month',
     name: '/layout/topic'
   },
   {
-    label: 'MESSAGE',
-    icon: 'bell',
+    label: '地点预约',
+    icon: 'map-marker-radius-outline',
     name: '/layout/message'
   },
   {
-    label: 'PROFILE',
+    label: '我的',
     icon: 'account-circle',
     name: '/layout/profile'
   }

@@ -4,10 +4,14 @@ import { useRouter } from 'vue-router'
 import { apiGetCards, apiGetPlainCards, apiGetRowCards, Card, CardList } from '@/apis'
 import { UseAxleRefs } from '@varlet/axle/use'
 import { Response } from '@/request'
+import QrcodeVue, { Level, RenderAs } from 'qrcode.vue'
 
 const router = useRouter()
 const active = ref('card')
 const isRefresh = ref(false)
+const value = ref<any>('https://example.com')
+const level = ref<Level>('M')
+const renderAs = ref<RenderAs>('svg')
 
 const [cardList, getCards, { loading: isCardsLoading }] = apiGetCards.use<CardList, Card[]>({
   value: {
@@ -104,9 +108,9 @@ function handleClick() {
       </template>
       <template #content>
         <var-tabs color="transparent" active-color="#fff" inactive-color="#ddd" v-model:active="active">
-          <var-tab name="card">{{ $t('Card List') }}</var-tab>
-          <var-tab name="rowCard">{{ $t('Card List') }}</var-tab>
-          <var-tab name="plainCard">{{ $t('Card List') }}</var-tab>
+          <var-tab name="card">{{ $t('QR') }}</var-tab>
+          <var-tab name="rowCard">{{ $t('我的预约') }}</var-tab>
+          <var-tab name="plainCard">{{ $t('会议通知') }}</var-tab>
         </var-tabs>
       </template>
     </app-header>
@@ -122,14 +126,16 @@ function handleClick() {
           >
             <var-space class="home-tab-item-space" direction="column" size="large">
               <var-card
-                :title="$t('Card Title')"
+                :title="'日常组会'"
                 :subtitle="$t('Card Subtitle')"
-                src="@/assets/images/material-2.png"
                 ripple
                 v-for="i in cardList.cards"
                 :key="i"
                 @click="handleClick"
               >
+                <template #image>
+                  <qrcode-vue :value="value" :level="level" :render-as="renderAs" />
+                </template>
                 <template #description>
                   <var-ellipsis class="var-card__description" :line-clamp="6" :tooltip="false">
                     {{ $t('Card Description') }}
