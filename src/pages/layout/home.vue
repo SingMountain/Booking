@@ -10,6 +10,9 @@ const size = ref(200)
 const loading = ref(false)
 const finished = ref(false)
 const list = ref(['8.13', '5.2', '3.18'])
+function handleRefresh() {
+  isRefresh.value = false
+}
 function load() {
   setTimeout(() => {
     loading.value = false
@@ -36,7 +39,7 @@ function load() {
       </template>
     </app-header>
 
-    <var-pull-refresh v-model="isRefresh">
+    <var-pull-refresh v-model="isRefresh" @refresh="handleRefresh">
       <var-tabs-items v-model:active="active">
         <var-tab-item class="home-tab-item" name="card">
           <var-space

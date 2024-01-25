@@ -36,22 +36,24 @@ function load() {
             :key="item"
             ripple
             outline
-            title="日常组会"
-            description="如果华佗个字傲~"
+            :floating-duration="650"
             v-model:floating="floating"
           >
+            <template #title>
+              <text style="font-weight: bolder; font-size: x-large"> 2212 </text>
+            </template>
             <template #description>
               <var-divider dashed />
               <var-space justify="space-between">
                 <var-space direction="column">
                   <var-space>
-                    <var-button type="info" size="mini">空调</var-button>
-                    <var-button type="info" size="mini">一体机</var-button>
-                    <var-button type="info" size="mini">监控</var-button>
+                    <var-button size="mini">空调</var-button>
+                    <var-button size="mini">一体机</var-button>
+                    <var-button size="mini">监控</var-button>
                   </var-space>
                   <var-space>
                     <var-icon name="account-circle" />
-                    <span>容量：32人</span>
+                    <text style="font-size: small">容量：32人</text>
                   </var-space>
                 </var-space>
 
