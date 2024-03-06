@@ -34,13 +34,14 @@ function load() {
             class="card"
             v-for="item in list"
             :key="item"
-            ripple
             outline
             :floating-duration="650"
             v-model:floating="floating"
           >
             <template #title>
+      
               <text style="font-weight: bolder; font-size: x-large"> 2212 </text>
+
             </template>
             <template #description>
               <var-divider dashed />
@@ -53,17 +54,31 @@ function load() {
                   </var-space>
                   <var-space>
                     <var-icon name="account-circle" />
-                    <text style="font-size: small">容量：32人</text>
+                    <text style="font-size: small">容量：{{item}}人</text>
                   </var-space>
                 </var-space>
-
+               <var-tooltip v-if="item==1">
                 <var-button type="primary" @click="floating = true">预约</var-button>
+               </var-tooltip>
+               <var-tooltip v-else-if="item==2" content="该会议室需要审核">
+                <var-button class="check-button" type="primary" @click="floating = true"  style="padding-right: 3.4px;">
+                  <template #default>
+                    预约
+                    <var-icon name="information-outline" size="12"/>
+                  </template>
+                </var-button>  
+               </var-tooltip> 
+               <var-tooltip v-else-if="item==3" content="没有预约权限">
+                <var-button  disabled type="primary" @click="floating = true">预约</var-button>
+               </var-tooltip>
               </var-space>
             </template>
             <template #extra> </template>
             <template #floating-content>
               <var-divider dashed />
-              <div class="card-example-text"></div>
+              <div class="card-example-text">
+                <time-grid />
+              </div>
             </template>
           </var-card>
         </var-space>
@@ -81,6 +96,7 @@ function load() {
   --card-padding: 5px;
   --card-footer-margin: 0;
   --card-title-margin: 0;
+  --badge-icon-size:8px;
   &-item {
     display: flex;
     align-items: center;
@@ -105,6 +121,9 @@ function load() {
 }
 .room-list {
   padding: 0 10px;
+}
+.var-badge--default{
+  height: 10px !important;
 }
 </style>
 

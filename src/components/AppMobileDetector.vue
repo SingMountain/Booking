@@ -8,7 +8,7 @@ const isMobile = ref(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera M
   <slot v-if="isMobile" />
 
   <div class="result-container" v-else>
-    <var-result class="result" type="warning" :title="$t('Warning')" :description="$t('Please use mobile visit')" />
+    刘宇你个小可爱
   </div>
 </template>
 
