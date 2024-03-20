@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const active = ref('module')
 const isRefresh = ref(false)
 
 function handleRefresh() {

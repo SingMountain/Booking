@@ -1,19 +1,44 @@
 <script setup lang="ts">
+import { useGlobalStore ,useBookStore} from '@/store';
+
+let today = new Date().toISOString().replace(/T.*$/, '')
+const global=useGlobalStore()
+const book=useBookStore()
 const isRefresh = ref(false)
-const date = ref<any>(new Date())
-function handleRefresh() {
-  isRefresh.value = false
-}
+const date = today
 const loading = ref(false)
 const finished = ref(false)
-const list = ref([1, 2, 3])
+let listData:any=ref([])
 const floating = ref(false)
+const {URL}=global
+let url=`${URL}/getEmptyByDate/`
+
+ async function handleRefresh() {
+  url = url+today
+  listData.value = (await (await fetch(url)).json()).data;
+  isRefresh.value = false;
+}
+
+
 function load() {
-  setTimeout(() => {
     loading.value = false
     finished.value = true
-  }, 1000)
 }
+function dateChange(e:any){
+  today=e; 
+  handleRefresh();
+}
+
+function onBookButton(item:any){
+  floating.value = true;
+  book.bookMeetingRoom=item;
+}
+
+onMounted(async ()=>{
+  url+=today
+  listData.value = (await (await fetch(url)).json()).data;
+})
+
 </script>
 <template>
   <div class="topic">
@@ -27,57 +52,61 @@ function load() {
           <app-theme-switch />
         </template>
       </app-header>
-      <var-date-picker v-model="date" />
-      <var-list :finished="finished" v-model:loading="loading" @load="load">
-        <var-space class="room-list" direction="column" size="large" justify="center" floating>
+
+      <var-date-picker v-model="date" :on-change="dateChange"/>
+
+      <var-list :finished="finished" v-model:loading="loading" @load="load" >
+        <var-space class="room-list" direction="column" size="large" justify="center" floating >
           <var-card
             class="card"
-            v-for="item in list"
-            :key="item"
             outline
             :floating-duration="650"
             v-model:floating="floating"
+            v-for="item in listData" 
+            :item="item"
+          
           >
             <template #title>
-      
-              <text style="font-weight: bolder; font-size: x-large"> 2212 </text>
-
+              <text style="font-weight: bolder; font-size: x-large"> {{ item.name }} </text>
             </template>
             <template #description>
               <var-divider dashed />
               <var-space justify="space-between">
                 <var-space direction="column">
-                  <var-space>
-                    <var-button size="mini">空调</var-button>
-                    <var-button size="mini">一体机</var-button>
-                    <var-button size="mini">监控</var-button>
+                  <var-space direction="row" >
+                    <var-button size="mini" v-for="detailItem in item.locationDetailsList" :item="item" :key="detailItem.facilityId">
+                      {{ detailItem.facilityName }}
+                    </var-button>
                   </var-space>
                   <var-space>
                     <var-icon name="account-circle" />
-                    <text style="font-size: small">容量：{{item}}人</text>
+                    <text style="font-size: small">容量：{{item.capacity}}人</text>
                   </var-space>
                 </var-space>
-               <var-tooltip v-if="item==1">
-                <var-button type="primary" @click="floating = true">预约</var-button>
+               <var-tooltip v-if="item.typeId==1">
+                <var-button type="primary" @click="onBookButton(item)">预约</var-button>
                </var-tooltip>
-               <var-tooltip v-else-if="item==2" content="该会议室需要审核">
-                <var-button class="check-button" type="primary" @click="floating = true"  style="padding-right: 3.4px;">
+               <var-tooltip v-else-if="item.typeId==2" content="该会议室需要审核">
+                <var-button class="check-button" type="primary" @click="onBookButton(item)"  style="padding-right: 3.4px;">
                   <template #default>
-                    预约
+                      预约
                     <var-icon name="information-outline" size="12"/>
                   </template>
                 </var-button>  
                </var-tooltip> 
-               <var-tooltip v-else-if="item==3" content="没有预约权限">
+               <var-tooltip v-else="item.typeId==3" content="没有预约权限">
                 <var-button  disabled type="primary" @click="floating = true">预约</var-button>
                </var-tooltip>
               </var-space>
             </template>
-            <template #extra> </template>
+
             <template #floating-content>
               <var-divider dashed />
               <div class="card-example-text">
-                <time-grid />
+                <time-grid/>
+
+
+              
               </div>
             </template>
           </var-card>
@@ -85,7 +114,6 @@ function load() {
       </var-list>
     </var-pull-refresh>
   </div>
-
   <router-stack-view />
 </template>
 

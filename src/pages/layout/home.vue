@@ -1,6 +1,8 @@
+
 <script setup lang="ts">
 import { ref } from 'vue'
 import QrcodeVue, { Level, RenderAs } from 'qrcode.vue'
+import { useGlobalStore } from '@/store';
 const active = ref('card')
 const isRefresh = ref(false)
 const value = ref<any>('https://example.com')
@@ -9,21 +11,36 @@ const renderAs = ref<RenderAs>('svg')
 const size = ref(200)
 const loading = ref(false)
 const finished = ref(false)
-const list = ref(['8.13', '5.2', '3.18'])
-function handleRefresh() {
-  isRefresh.value = false
+const ListById = ref({})
+const timeReg=/(?<=-)\d{2}-\d{2}/g
+const dateReg=/\d{2}:\d{2}/g
+const store=useGlobalStore()
+const {studentID,URL} = store
+
+const url = `${URL}/getListById?organizerId=${studentID}`
+
+async function handleRefresh() {
+  isRefresh.value = false;
+  ListById.value = (await (await fetch(url)).json()).data;
+  console.log(ListById)
 }
 function load() {
-  setTimeout(() => {
-    loading.value = false
-    finished.value = true
-  }, 1000)
-}
+  loading.value = false;
+  finished.value = true;
+  };
+
+    // dateList.push(obj.startTime.match(/(?<=-)\d{2}-\d{2}/g));
+    // timeList.push(obj.startTime.match(/\d{2}:\d{2}/g));   
+
+
+onMounted(async ()=>{
+  ListById.value = (await (await fetch(url)).json()).data;
+})
 </script>
 
 <template>
   <div class="home">
-    <app-header>
+    <app-header>.0.
       <template #left>
         <app-side-menu />
       </template>
@@ -52,20 +69,20 @@ function load() {
             <qrcode-vue :value="value" :level="level" :render-as="renderAs" :size="size" :margin="5" />
           </var-space>
           <var-list :finished="finished" v-model:loading="loading" @load="load">
-            <var-space direction="column" v-for="(item, index) in list" :key="index">
+            <var-space direction="column" v-for="(item, index) in ListById" :key="index">
               <div style="display: flex; align-items: center">
                 <div style="flex: 1">
-                  <div style="font-size: x-large">{{ item }}</div>
-                  <div style="font-size: small">9:13</div>
+                  <div style="font-size: small">{{ item.startTime.match(timeReg)[0] }}</div>
+                  <div style="font-size: x-large">{{item.startTime.match(dateReg)[0] }}</div>
                 </div>
                 <div style="flex: 1; align-items: flex-start">
                   <VarImage src="../../../public/分割.png" width="10px" />
                 </div>
                 <div style="flex: 4">
-                  <div style="font-size: large">日常组会</div>
+                  <div style="font-size: large">{{ item.title }}</div>
                   <div style="font-size: small; text-align: right">
                     <var-icon name="map-marker-radius-outline" />
-                    2212
+                    {{ item.locationName }}
                   </div>
                 </div>
               </div>
