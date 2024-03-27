@@ -54,7 +54,4 @@ pnpm test:coverage
 ```
 
 
-#### 微信 / 支付宝
 
-<img style="width: 25%" src="https://cdn.jsdelivr.net/gh/varletjs/varlet-static/wechat.jpg" />
-<img style="width: 25%" src="https://cdn.jsdelivr.net/gh/varletjs/varlet-static/alipay.jpg" />
